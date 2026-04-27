@@ -1,6 +1,10 @@
 package com.grodomir.oozingfactory;
 
+import com.grodomir.oozingfactory.common.fluid.ModFluidTypes;
+import com.grodomir.oozingfactory.common.fluid.ModFluids;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -27,5 +31,7 @@ public class OozingFactoryClient {
         // Some client setup code
         OozingFactoryMod.LOGGER.info("HELLO FROM CLIENT SETUP");
         OozingFactoryMod.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        //ItemBlockRenderTypes.setRenderLayer(ModFluids.SOURCE_SLIME.get(), RenderType.translucent());
+        //ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_SLIME.get(), RenderType.translucent());
     }
 }

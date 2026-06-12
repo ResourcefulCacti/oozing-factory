@@ -1,6 +1,7 @@
 package com.grodomir.oozingfactory.common.fluid;
 
 import com.grodomir.oozingfactory.OozingFactoryMod;
+import com.grodomir.oozingfactory.common.block.ModBlocks;
 import com.grodomir.oozingfactory.particle.ModParticles;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -25,7 +26,7 @@ public class ModFluidTypes {
                             SLIME_FLOWING_RL,
                             0xA17BCA52 ,
                             new Vector3f(102f / 255f, 1f, 102f / 255f),
-                            FluidType.Properties.create().density(3000).viscosity(6000).canSwim(false).canDrown(true).canExtinguish(false).canConvertToSource(false).supportsBoating(true).addDripstoneDripping(0.175F, ModParticles.SLIME_FLUID_PARTICLES.get(), Blocks.LAVA_CAULDRON, null)
+                            FluidType.Properties.create().density(3000).viscosity(6000).canSwim(false).canDrown(true).canExtinguish(false).canConvertToSource(false).supportsBoating(true).addDripstoneDripping(0.175F, ModParticles.SLIME_FLUID_PARTICLES.get(), ModBlocks.SLIME_CAULDRON.get(), null)
                     ))
             ;
 

@@ -15,28 +15,26 @@ public class SlimeFluidParticle extends TextureSheetParticle {
 
         this.setSpriteFromAge(spriteSet);
 
-        this.gravity = 0.05F;
+        this.gravity = 0.5F;
         this.friction = 0.98F;
         this.xd = 0.00;
         this.yd = -0.02;
         this.zd = 0.00;
-        this.lifetime = 40;
+
+        int min_tick = 90;
+        int max_tick = 120;
+
+        this.lifetime = (int)(min_tick + Math.random() * (max_tick - min_tick));
     }
 
-    /*@Override
+    @Override
     public void tick() {
         super.tick();
 
-        if(this.onGround){
+        if(this.age > 60 && this.onGround){
             this.remove();
-
-            this.level.addParticle(
-                    ModParticles.SLIME_FLUID_PARTICLES.get(),
-                    this.x, this,y, this.z,
-                    0.0, 0.0, 0.0
-            );
         }
-    }*/
+    }
 
     @Override
     public ParticleRenderType getRenderType() {

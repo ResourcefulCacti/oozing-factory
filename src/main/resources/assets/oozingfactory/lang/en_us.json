@@ -1,3 +1,14 @@
 {
-  "block.oozingfactory.placeholder_name": "Placeholder name"
+  "creativetab.oozingfactory.oozing_tab": "Oozing Factory",
+  "slimehover.oozingfactory.xp": "Experience",
+  "slimehover.oozingfactory.lvl": "Level",
+  "menu.oozingfactory.basic_sieve": "Sieve",
+
+  "fluid_type.oozingfactory.slime": "Liquid Slime",
+  "block.oozingfactory.slime_fluid": "Liquid Slime",
+
+  "block.oozingfactory.basic_sieve": "Sieve",
+  "block.oozingfactory.upgrade_station": "WIP Upgrade Station",
+
+  "item.oozingfactory.slime_bucket": "Liquid Slime Bucket"
 }

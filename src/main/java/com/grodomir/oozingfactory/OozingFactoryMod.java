@@ -1,13 +1,20 @@
 package com.grodomir.oozingfactory;
 
 import com.grodomir.oozingfactory.common.block.ModBlocks;
-import com.grodomir.oozingfactory.common.block.custom.SlimeCauldron;
 import com.grodomir.oozingfactory.common.fluid.BaseFluidTypes;
 import com.grodomir.oozingfactory.common.fluid.ModFluidTypes;
 import com.grodomir.oozingfactory.common.fluid.ModFluids;
 import com.grodomir.oozingfactory.common.item.ModItems;
 import com.grodomir.oozingfactory.particle.ModParticles;
 import com.grodomir.oozingfactory.particle.SlimeFluidParticle;
+import com.grodomir.oozingfactory.registry.OozingCauldronInteractions;
+import com.grodomir.oozingfactory.registry.OozingCreativeTab;
+import com.grodomir.oozingfactory.registry.OozingEntities;
+import com.grodomir.oozingfactory.screen.BasicSieveScreen;
+import com.grodomir.oozingfactory.screen.OozingMenuTypes;
+import com.grodomir.oozingfactory.screen.upgrade_station.UpgradeStationScreen;
+import com.grodomir.oozingfactory.setup.OozingSetup;
+import com.grodomir.oozingfactory.tests.TestCommand;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
@@ -16,29 +23,19 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.fluids.RegisterCauldronFluidContentEvent;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -48,10 +45,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(OozingFactoryMod.MODID)
@@ -72,22 +65,34 @@ public class OozingFactoryMod {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
 
+        OozingSetup.setup();
+
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        OozingEntities.register(modEventBus);
+
         ModParticles.register(modEventBus);
+
         ModFluids.register(modEventBus);
         ModFluidTypes.register(modEventBus);
+
+        OozingCreativeTab.register(modEventBus);
+
+        OozingMenuTypes.register(modEventBus);
 
         modEventBus.addListener(this::registerCauldronFluidContent);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
+        modEventBus.addListener(this::registerCapabilities);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, MODID + "/common.toml");
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
+        OozingCauldronInteractions.register();
     }
 
     // Add the example block item to the building blocks tab
@@ -109,8 +114,23 @@ public class OozingFactoryMod {
         );
     }
 
+    private void registerCapabilities(RegisterCapabilitiesEvent event){
+        OozingEntities.registerCapabilities(event);
+    }
+
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents{
+
+        @SubscribeEvent
+        public static void registerCommand(RegisterCommandsEvent event){
+            TestCommand.register(event.getDispatcher());
+        }
+
+        @SubscribeEvent
+        public static void registerScreens(RegisterMenuScreensEvent event){
+            event.register(OozingMenuTypes.BASIC_SIEVE_MENU.get(), BasicSieveScreen::new);
+            event.register(OozingMenuTypes.UPGRADE_STATION_MENU.get(), UpgradeStationScreen::new);
+        }
 
         @SubscribeEvent
         public static void registerParitcleFactories(RegisterParticleProvidersEvent event){
